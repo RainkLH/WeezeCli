@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <PackageId>Raink.$(AssemblyName)</PackageId>
+    <Title>WeezeCli</Title>
+    <Authors>Raink</Authors>
+    <Description>Micro-framework for .NET Core console application</Description>
+    <PackageProjectUrl>https://github.com/RainkLH/WeezeCli</PackageProjectUrl>
   </PropertyGroup>
 
 </Project>
