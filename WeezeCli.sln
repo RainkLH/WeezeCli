@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeezeCli", "WeezeCli\WeezeCli.csproj", "{AC0D1DF2-BE30-444E-A67B-417F8C2E0474}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeezeCliTest", "WeezeCliTest\WeezeCliTest.csproj", "{B8499008-4EB3-4461-BCC1-51CE81E12458}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeezeCli.Test", "WeezeCli.Test\WeezeCli.Test.csproj", "{D951F622-0F0C-4CCD-B03F-69720093B2CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{AC0D1DF2-BE30-444E-A67B-417F8C2E0474}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC0D1DF2-BE30-444E-A67B-417F8C2E0474}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC0D1DF2-BE30-444E-A67B-417F8C2E0474}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B8499008-4EB3-4461-BCC1-51CE81E12458}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B8499008-4EB3-4461-BCC1-51CE81E12458}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B8499008-4EB3-4461-BCC1-51CE81E12458}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B8499008-4EB3-4461-BCC1-51CE81E12458}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D951F622-0F0C-4CCD-B03F-69720093B2CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D951F622-0F0C-4CCD-B03F-69720093B2CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D951F622-0F0C-4CCD-B03F-69720093B2CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D951F622-0F0C-4CCD-B03F-69720093B2CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

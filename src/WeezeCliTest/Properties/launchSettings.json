@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "WeezeCliTest": {
-      "commandName": "Project",
-      "commandLineArgs": "add --arg1 yy --arg2 99"
-    }
-  }
-}
