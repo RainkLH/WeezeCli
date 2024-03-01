@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WeezeCliTest": {
+      "commandName": "Project",
+      "commandLineArgs": "sayhi --help"
+    }
+  }
+}

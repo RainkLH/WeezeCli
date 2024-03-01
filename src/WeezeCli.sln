@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34616.47
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeezeCli", "WeezeCli\WeezeCli.csproj", "{AC0D1DF2-BE30-444E-A67B-417F8C2E0474}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeezeCliTest", "WeezeCliTest\WeezeCliTest.csproj", "{B8499008-4EB3-4461-BCC1-51CE81E12458}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AC0D1DF2-BE30-444E-A67B-417F8C2E0474}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC0D1DF2-BE30-444E-A67B-417F8C2E0474}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC0D1DF2-BE30-444E-A67B-417F8C2E0474}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC0D1DF2-BE30-444E-A67B-417F8C2E0474}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8499008-4EB3-4461-BCC1-51CE81E12458}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8499008-4EB3-4461-BCC1-51CE81E12458}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8499008-4EB3-4461-BCC1-51CE81E12458}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8499008-4EB3-4461-BCC1-51CE81E12458}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BC380A56-CF08-4D9B-AA45-C75F44C0E8A4}
+	EndGlobalSection
+EndGlobal
