@@ -8,31 +8,31 @@ namespace WeezeCliTest
         {
             WeezeCliApp weezeCliHelper = new WeezeCliApp("");
             weezeCliHelper.Register(new Test());
-            if(!weezeCliHelper.ParseAndInvoke(args, out string message))
+            weezeCliHelper.Register(new Test2());
+            if (!weezeCliHelper.ParseAndInvoke(args, out string message))
                 Console.WriteLine(message);
             Console.ReadLine();
         }
+
     }
 
-    [CommandGroup("测试")]
+    [CommandGroup("测试", asMainApp: true)]
     public class Test
     {
-        [Command("Main方法")]
-        public void Main(string args)
-        {
-            Console.WriteLine("Hello, World!");
-        }
-
         [Command("Add方法")]
         public void Add(string arg1, string arg2)
         {
-            Console.WriteLine("Hello, World!");
+            Console.WriteLine($"Test.Add {arg1}, {arg2}");
         }
+    }
 
-        [Command("SayHi方法")]
-        public void SayHi(string name)
+    [CommandGroup("Test2")]
+    public class Test2
+    {
+        [Command("Add方法")]
+        public void Add(string arg1, string arg2)
         {
-            Console.WriteLine("Hello, World!");
+            Console.WriteLine("Test2.Add {arg1}, {arg2}");
         }
     }
 }

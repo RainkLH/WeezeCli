@@ -20,17 +20,26 @@ namespace WeezeCli
         public void Register<T>(T instance) where T : class
         {
             Type type = typeof(T);
+            //step1: check attribute
             CommandGroupAttribute groupAttribute = type.GetCustomAttribute<CommandGroupAttribute>();
             if (groupAttribute == null)
             {
                 throw new ArgumentException($"Can`t find CommandGroupAttribute config on {nameof(instance)}. ");
             }
-
-            string key = groupAttribute.Name.ToLower();
+            //step2: check is existed
+            string key = groupAttribute.AsMainApp ? "" : type.Name.ToLower();
             if (cmdGroups.ContainsKey(key))
             {
-                throw new ArgumentException($"Command group {key} is already existed. ");
+                if (key == "")
+                {
+                    throw new ArgumentException($"Only one main application can be registered. ");
+                }
+                else
+                {
+                    throw new ArgumentException($"Application: [{key}] is already existed. ");
+                }
             }
+            //step3 chek commands
             var methods = instance.GetType().GetMethods();
             foreach (var method in methods)
             {
@@ -41,10 +50,14 @@ namespace WeezeCli
                     {
                         throw new ArgumentOutOfRangeException("Only variables of type string are supported as command parameters. ");
                     }
-                }
-                
+                }                
             }
             cmdGroups[key] = new CommandGroup(key, groupAttribute.Description, instance);
+            //step4: check main entrance
+            if (!cmdGroups.ContainsKey(""))
+            {
+                throw new ArgumentException($"Please regist main application first. ");
+            }
         }
 
         public bool ParseAndInvoke(string[] args, out string message)
@@ -64,15 +77,23 @@ namespace WeezeCli
                     return false;
                 }
 
-                string callerName = args[0];
-                CommandExecuter executer = GetMethod(callerName);
-                if (executer == null)
+                CommandGroup commandGroup = GetCmdGroup(args, out int splitIndex);
+                string callerName = string.Join(" ", args.Take(splitIndex));
+                if (commandGroup == null)
                 {
                     message = $"No executable command found matching '{callerName}'. ";
                     return false;
                 }
+
+                string cmdName = args[splitIndex - 1];
+                CommandExecuter executer = GetMethod(commandGroup, cmdName);
+                if (executer == null)
+                {
+                    message = $"No executable command found matching '{cmdName}'. ";
+                    return false;
+                }
                 CommandArg commandArg = new CommandArg(callerName);
-                ParseArgs(args, ref commandArg);
+                ParseArgs(args, splitIndex, ref commandArg);
                 if (commandArg.Error)
                 {
                     if (args.Length > 0 && Config.HelpArg.Equals(args[1]))
@@ -100,47 +121,46 @@ namespace WeezeCli
             return true;
         }
 
-        private CommandExecuter GetMethod(string callerName)
+        private CommandGroup GetCmdGroup(string[] args, out int splitIndex)
         {
-            int spliterCount = callerName.Count(x => x == '.');
-            if (spliterCount > 1)
+            string group = "";
+            string cmdName = args[0].ToLower();
+            splitIndex = 1;
+            if (args.Length > 1 && !args[1].StartsWith("-") && !double.TryParse(args[1], out _))
+            {
+                group = args[0].ToLower();
+                cmdName = args[1].ToLower();
+                splitIndex = 2;
+            }
+            if (string.IsNullOrEmpty(cmdName))
             {
                 return null;
             }
-            string groupKey = Config.DefaultGroupName.ToLower();
-            string cmdKey = callerName.ToLower();
-            if (spliterCount == 1)
-            {
-                var fullName = callerName.Split('.');
-                groupKey = fullName[0].ToLower();
-                cmdKey = fullName[1].ToLower();
-            }
-            if (string.IsNullOrEmpty(groupKey) || string.IsNullOrEmpty(cmdKey))
+            if (!cmdGroups.ContainsKey(group))
             {
                 return null;
             }
-            if (!cmdGroups.ContainsKey(groupKey))
-            {
-                return null;
-            }
-            var group = cmdGroups[groupKey];
+            return cmdGroups[group];
+        }
 
-            var instance = group.Instance;
+        private CommandExecuter GetMethod(CommandGroup commandGroup, string cmdName)
+        {
+            var instance = commandGroup.Instance;
             var methods = instance.GetType().GetMethods();
-            var method = methods.FirstOrDefault(x => x.GetCustomAttribute<CommandAttribute>() != null && x.Name.ToLower() == cmdKey);
+            var method = methods.FirstOrDefault(x => x.GetCustomAttribute<CommandAttribute>() != null && x.Name.ToLower() == cmdName);
             if (method is null)
                 return null;
 
-            return new CommandExecuter(group, method);
+            return new CommandExecuter(commandGroup, method);
         }
 
-        private void ParseArgs(string[] args, ref CommandArg commandArg)
+        private void ParseArgs(string[] args, int splitIndex, ref CommandArg commandArg)
         {
-            if (args.Length > 2)
+            if (args.Length > splitIndex)
             {
-                string paramKey = args[1];
+                string paramKey = args[splitIndex];
                 List<string> paramValues = new List<string>();
-                for (int i = 2; i < args.Length; i++)
+                for (int i = splitIndex + 1; i < args.Length; i++)
                 {
                     var arg = args[i];
                     if (arg.StartsWith("-") && !double.TryParse(arg, out _))

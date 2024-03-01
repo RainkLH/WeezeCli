@@ -2,7 +2,7 @@
   "profiles": {
     "WeezeCliTest": {
       "commandName": "Project",
-      "commandLineArgs": "sayhi --help"
+      "commandLineArgs": "add --arg1 yy --arg2 99"
     }
   }
 }
