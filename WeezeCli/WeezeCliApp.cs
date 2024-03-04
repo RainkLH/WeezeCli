@@ -102,7 +102,7 @@ namespace WeezeCli
                 CommandExecuter executer = GetMethod(commandGroup, cmdName);
                 if (executer == null)
                 {
-                    message = $"No executable command found matching '{cmdName}'. ";
+                    message = $"No executable command found matching '{commandGroup.Name} {cmdName}'. ";
                     return false;
                 }
                 CommandArg commandArg = new CommandArg(callerName);
