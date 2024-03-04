@@ -2,7 +2,7 @@
   "profiles": {
     "WeezeCli.Test": {
       "commandName": "Project",
-      "commandLineArgs": "add --arg1 yy --arg2 88"
+      "commandLineArgs": " test2 "
     }
   }
 }

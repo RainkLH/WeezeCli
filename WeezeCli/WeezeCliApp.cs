@@ -8,12 +8,16 @@ namespace WeezeCli
 {
     public class WeezeCliApp
     {
-        private string appInfo;
+        private string appName;
+        private string description;
         private Dictionary<string, CommandGroup> cmdGroups;
 
-        public WeezeCliApp(string appInfo)
+        public WeezeCliApp(string appName, string description = "")
         {
-            this.appInfo = appInfo ?? "";
+            if (string.IsNullOrEmpty(appName))
+                throw new ArgumentNullException("The application must have a name. ");
+            this.appName = appName;
+            this.description = description ?? "";
             this.cmdGroups = new Dictionary<string, CommandGroup>();
         }
 
@@ -73,8 +77,17 @@ namespace WeezeCli
 
                 if (Config.InfoArg.Equals(args[0]))
                 {
-                    message = this.appInfo;
+                    message = $"Name: {this.appName}\r\nDescription:{this.description}";
                     return false;
+                }
+
+                if (args.Length >= 1 && cmdGroups.ContainsKey(args[0]))
+                {
+                    if (args.Length == 1 || (args.Length > 1 && Config.HelpArg.Equals(args[1])))
+                    {
+                        message = GetCmdHelperMessage(cmdGroups[args[0]], null);
+                        return false;
+                    }
                 }
 
                 CommandGroup commandGroup = GetCmdGroup(args, out int splitIndex);
@@ -96,9 +109,10 @@ namespace WeezeCli
                 ParseArgs(args, splitIndex, ref commandArg);
                 if (commandArg.Error)
                 {
-                    if (args.Length > 0 && Config.HelpArg.Equals(args[1]))
+                    if (args.Length == splitIndex 
+                        || (args.Length > splitIndex && Config.HelpArg.Equals(args[splitIndex + 1])))
                     {
-                        message = GetCmdHelperMessage(commandArg.Name, executer.MethodInfo);
+                        message = GetCmdHelperMessage(commandGroup, executer.MethodInfo);
                     }
                     else
                     {
@@ -109,7 +123,7 @@ namespace WeezeCli
 
                 if (!executer.TryExecute(commandArg, out message))
                 {
-                    message = message + "\r\n" + GetCmdHelperMessage(commandArg.Name, executer.MethodInfo);
+                    message = message + "\r\n" + GetCmdHelperMessage(commandGroup, executer.MethodInfo);
                 }
             }
             catch (Exception err)
@@ -135,11 +149,11 @@ namespace WeezeCli
             if (string.IsNullOrEmpty(cmdName))
             {
                 return null;
-            }
+            }            
             if (!cmdGroups.ContainsKey(group))
             {
                 return null;
-            }
+            }            
             return cmdGroups[group];
         }
 
@@ -197,7 +211,10 @@ namespace WeezeCli
             foreach (var groupKey in cmdGroups.Keys)
             {
                 CommandGroup group = cmdGroups[groupKey];
-                messages.Add($"{group.Name}: {group.Description}");
+                if(string.IsNullOrEmpty(group.Name))
+                    messages.Add($"{this.appName} Commands: ");
+                else
+                    messages.Add($"{group.Name} Commands: ");
 
                 var instance = group.Instance;
                 var methods = instance.GetType().GetMethods();
@@ -213,24 +230,44 @@ namespace WeezeCli
             return string.Join("\r\n", messages);
         }
 
-        private string GetCmdHelperMessage(string name, MethodInfo methodInfo)
+        private string GetCmdHelperMessage(CommandGroup group, MethodInfo methodInfo)
         {
-            List<string> message = new List<string>();
-            message.Add("Description:");
-            message.Add("  " + methodInfo.GetCustomAttribute<CommandAttribute>().Description);
-            message.Add("");
-
-            message.Add("Usage:");
-            string usage = "  " + name;
-            var parameters = methodInfo.GetParameters();
-            foreach (var item in parameters)
+            List<string> messages = new List<string>();
+            if (methodInfo == null)
             {
-                usage += " " + $"--{item.Name.ToLower()}" + " " + $"[{item.Name.ToUpper()}]";
+                if (string.IsNullOrEmpty(group.Name))
+                    messages.Add($"{this.appName}({group.Description})");
+                else
+                    messages.Add($"{group.Name}({group.Description})");
+                messages.Add($"Commands：");
+                var instance = group.Instance;
+                var methods = instance.GetType().GetMethods();
+                foreach (var method in methods)
+                {
+                    if (method.GetCustomAttribute<CommandAttribute>() is CommandAttribute command)
+                    {
+                        messages.Add($"  {method.Name}: {command.Description}");
+                    }
+                }
             }
-            message.Add(usage);
-            message.Add("");
+            else
+            {
+                messages.Add("Description:");
+                messages.Add("  " + methodInfo.GetCustomAttribute<CommandAttribute>().Description);
+                messages.Add("");
 
-            return string.Join("\r\n", message);
+                messages.Add("Usage:");
+                string usage = "  " + group.Name.ToLower() + " " + methodInfo.Name.ToLower();
+                var parameters = methodInfo.GetParameters();
+                foreach (var item in parameters)
+                {
+                    usage += " " + $"--{item.Name.ToLower()}" + " " + $"[{item.Name.ToUpper()}]";
+                }
+                messages.Add(usage);
+                messages.Add("");
+            }
+
+            return string.Join("\r\n", messages);
         }
 
     }

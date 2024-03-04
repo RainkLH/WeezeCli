@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            WeezeCliApp weezeCliHelper = new WeezeCliApp("");
+            WeezeCliApp weezeCliHelper = new WeezeCliApp("Test");
             weezeCliHelper.Register(new Test());
             weezeCliHelper.Register(new Test2());
             if (!weezeCliHelper.ParseAndInvoke(args, out string message))
