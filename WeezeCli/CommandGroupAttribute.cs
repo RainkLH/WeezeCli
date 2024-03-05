@@ -7,13 +7,13 @@ namespace WeezeCli
     [AttributeUsage(AttributeTargets.Class)]
     public class CommandGroupAttribute : Attribute
     {
-        public CommandGroupAttribute(string description, bool asMainApp = false)
+        public CommandGroupAttribute(string name, string description)
         {
+            this.Name = name;
             this.Description = description;
-            this.AsMainApp = asMainApp;
         }
 
-        public bool AsMainApp { get; }
+        public string Name { get; }
 
         public string Description { get; }
     }

@@ -2,7 +2,7 @@
   "profiles": {
     "WeezeCli.Test": {
       "commandName": "Project",
-      "commandLineArgs": "ttt ddd eee dddd"
+      "commandLineArgs": "add --arg1 dd"
     }
   }
 }

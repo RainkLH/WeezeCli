@@ -11,27 +11,45 @@ namespace WeezeCli
         private string appName;
         private string description;
         private Dictionary<string, CommandGroup> cmdGroups;
-
-        public WeezeCliApp(string appName, string description = "")
+        
+        public static WeezeCliApp Build<T>(T instance) where T : class
         {
-            if (string.IsNullOrEmpty(appName))
-                throw new ArgumentNullException("The application must have a name. ");
+            CheckProgramInstance(instance,out Type type, out CommandGroupAttribute groupAttribute);
+            
+            WeezeCliApp cliApp = new WeezeCliApp(groupAttribute.Name, groupAttribute.Description);
+            cliApp.BuildCore("", type, groupAttribute, instance);
+            return cliApp;
+        }
+
+        public void AddExtProgram<T>(T instance) where T : class
+        {
+            CheckProgramInstance(instance, out Type type, out CommandGroupAttribute groupAttribute);
+
+            this.BuildCore(groupAttribute.Name, type, groupAttribute, instance);
+        }
+
+        private static void CheckProgramInstance<T>(T instance, out Type type, out CommandGroupAttribute groupAttribute) where T : class
+        {
+            type = typeof(T);
+            groupAttribute = type.GetCustomAttribute<CommandGroupAttribute>();
+            if (groupAttribute == null)
+                throw new ArgumentException($"Can`t find CommandGroupAttribute config on {nameof(instance)}. ");
+            if (string.IsNullOrEmpty(groupAttribute.Name))
+                throw new ArgumentNullException("The program must has a name. ");
+        }
+
+
+        private WeezeCliApp(string appName, string description = "")
+        {
             this.appName = appName;
             this.description = description ?? "";
             this.cmdGroups = new Dictionary<string, CommandGroup>();
         }
 
-        public void Register<T>(T instance) where T : class
+        private void BuildCore(string name, Type type, CommandGroupAttribute groupAttribute, object instance) 
         {
-            Type type = typeof(T);
-            //step1: check attribute
-            CommandGroupAttribute groupAttribute = type.GetCustomAttribute<CommandGroupAttribute>();
-            if (groupAttribute == null)
-            {
-                throw new ArgumentException($"Can`t find CommandGroupAttribute config on {nameof(instance)}. ");
-            }
-            //step2: check is existed
-            string key = groupAttribute.AsMainApp ? "" : type.Name.ToLower();
+            //step1: check is existed
+            string key = name.ToLower();
             if (cmdGroups.ContainsKey(key))
             {
                 if (key == "")
@@ -43,7 +61,7 @@ namespace WeezeCli
                     throw new ArgumentException($"Application: [{key}] is already existed. ");
                 }
             }
-            //step3 chek commands
+            //step2 chek commands
             var methods = instance.GetType().GetMethods();
             foreach (var method in methods)
             {
@@ -54,14 +72,10 @@ namespace WeezeCli
                     {
                         throw new ArgumentOutOfRangeException("Only variables of type string are supported as command parameters. ");
                     }
-                }                
+                }
             }
             cmdGroups[key] = new CommandGroup(key, groupAttribute.Description, instance);
-            //step4: check main entrance
-            if (!cmdGroups.ContainsKey(""))
-            {
-                throw new ArgumentException($"Please regist main application first. ");
-            }
+            
         }
 
         public bool ParseAndInvoke(string[] args, out string message)
@@ -124,6 +138,7 @@ namespace WeezeCli
                 if (!executer.TryExecute(commandArg, out message))
                 {
                     message = message + "\r\n" + GetCmdHelperMessage(commandGroup, executer.MethodInfo);
+                    return false;
                 }
             }
             catch (Exception err)
