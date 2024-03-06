@@ -176,7 +176,7 @@ namespace WeezeCli
         {
             var instance = commandGroup.Instance;
             var methods = instance.GetType().GetMethods();
-            var method = methods.FirstOrDefault(x => x.GetCustomAttribute<CommandAttribute>() != null && x.Name.ToLower() == cmdName);
+            var method = methods.FirstOrDefault(x => x.GetCustomAttribute<CommandAttribute>() != null && x.Name.ToLower() == cmdName.ToLower());
             if (method is null)
                 return null;
 
