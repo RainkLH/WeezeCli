@@ -42,8 +42,8 @@ namespace WeezeCli.Model
 
         private bool IsCmdArgMatchParameter(string arg, string parameter)
         {
-            string cmdArg = arg.Replace("-", "");
-            return parameter.StartsWith(cmdArg);
+            string cmdArg = arg.Replace("-", "").ToLower();
+            return parameter.ToLower().StartsWith(cmdArg);
         }
 
         public bool TryExecute(CommandArg commandArg, out string message)

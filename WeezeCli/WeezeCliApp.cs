@@ -214,10 +214,6 @@ namespace WeezeCli
                         commandArg.Args[paramKey] = string.Join(" ", paramValues);
                 }
             }
-            else
-            {
-                commandArg.Error = true;
-            }
         }
 
         public string GetAppHelperMessage()
