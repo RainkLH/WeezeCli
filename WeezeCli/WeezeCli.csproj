@@ -8,6 +8,7 @@
     <Authors>Raink</Authors>
     <Description>Micro-framework for .NET Core console application</Description>
     <PackageProjectUrl>https://github.com/RainkLH/WeezeCli</PackageProjectUrl>
+    <Version>1.0.2-dev-0.1</Version>
   </PropertyGroup>
 
 </Project>
