@@ -30,7 +30,7 @@ namespace WeezeCli.Model
                 {
                     value = commandArg.Args[cmdArgKey];
                 }
-                if (string.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value) && parameter.DefaultValue == null)
                 {
                     return canExecute;
                 }
